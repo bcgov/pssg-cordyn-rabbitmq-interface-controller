@@ -18,8 +18,8 @@ namespace cornet_dynamics_rabbitMQ_interface.Controllers
         [Route("messages")]
         public RabbitMessages GetMessages()
         {
+            Console.WriteLine("{0}: Get all messages request has been recieved. {1}", DateTime.Now, Environment.NewLine);
             RabbitService rabbitService = new RabbitService();
-
             return rabbitService.GetRabbitMessages();
         }
 
@@ -27,6 +27,7 @@ namespace cornet_dynamics_rabbitMQ_interface.Controllers
         [Route("message")]
         public RabbitMessages Get([FromQuery] string id,[FromQuery] string guid)
         {
+            Console.WriteLine("{0}: Get message request has been recieved. Requested id: {1}, guid: {2} {3}", DateTime.Now, id, guid, Environment.NewLine);
             RabbitService rabbitService = new RabbitService();
             return rabbitService.GetRabbitMessageById(id, guid);
         }
@@ -35,6 +36,7 @@ namespace cornet_dynamics_rabbitMQ_interface.Controllers
         [Route("requeue")]
         public IActionResult ReQueuePost([FromQuery] string id, [FromQuery] string guid)
         {
+            Console.WriteLine("{0}: Re-Queue message request has been recieved. Requested id: {1}, guid: {2} {3}", DateTime.Now, id, guid, Environment.NewLine);
             RabbitService rabbitService = new RabbitService();
             if (rabbitService.ReQueueMessage(id, guid))
             {
@@ -42,13 +44,14 @@ namespace cornet_dynamics_rabbitMQ_interface.Controllers
             }
             else
             {
-                return NotFound();
+                return NotFound("Message not found");
             }
         }
         [HttpPost]
         [Route("requeueall")]
         public IActionResult ReQueueMultiplePost()
         {
+            Console.WriteLine("{0}: Re-Queue all messages request has been recieved. {1}", DateTime.Now, Environment.NewLine);
             RabbitService rabbitService = new RabbitService();
             if (rabbitService.ReQueueMessages())
             {
@@ -56,7 +59,7 @@ namespace cornet_dynamics_rabbitMQ_interface.Controllers
             }
             else
             {
-                return NotFound();
+                return NotFound("Not all messages succeeded");
             }
 
         }
@@ -64,6 +67,7 @@ namespace cornet_dynamics_rabbitMQ_interface.Controllers
         [Route("deletemessage")]
         public IActionResult DeleteMessagePost([FromQuery] string id, [FromQuery] string guid)
         {
+            Console.WriteLine("{0}: De-Queue message request has been recieved. Requested id: {1}, guid: {2} {3}", DateTime.Now, id, guid, Environment.NewLine);
             RabbitService rabbitService = new RabbitService();
             if (rabbitService.DeleteMessage(id, guid))
             {
@@ -71,15 +75,17 @@ namespace cornet_dynamics_rabbitMQ_interface.Controllers
             }
             else
             {
-                return NotFound();
+                return NotFound("Message not found nothing removed from queue");
             }
         }
         [HttpDelete]
         [Route("deletemessages")]
-        public void DeleteMessagesPost()
+        public IActionResult DeleteMessagesPost()
         {
+            Console.WriteLine("{0}: Queue purge message request has been recieved. {1}", DateTime.Now, Environment.NewLine);
             RabbitService rabbitService = new RabbitService();
             rabbitService.DeleteMessages();
+            return Ok("Queue has been purged");
         }
     }
 }

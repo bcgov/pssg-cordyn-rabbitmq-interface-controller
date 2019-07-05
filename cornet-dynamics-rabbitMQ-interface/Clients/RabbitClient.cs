@@ -110,6 +110,7 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
         public QueueMessage DeQueueMessage(String id, String guid)
         {
             ConnectionFactory factory = new ConnectionFactory();
+            bool found = false;
             QueueMessage queueMessage = new QueueMessage();
             factory.UserName = username;
             factory.Password = password;
@@ -126,23 +127,25 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
                     {
                         //Ack the message to dequeue
                         channel.BasicAck(result.DeliveryTag, false);
+                        found = true;
                         //Exit the loop
                         break;
                     }
                 }
-                //BasicGetResult result = channel.BasicGet(parkingLotQueue, false);
-                //while (result != null)
-                //{
-
-
-                //    //Get the next message
-                //    result = channel.BasicGet(parkingLotQueue, false);
-                //}
 
             }
-            return queueMessage;
+            if (found)
+            {
+                return queueMessage;
+            }
+            else
+            {
+                return null;
+            }
+
+            
         }
-        public QueueMessage DeQueueMessages(RabbitMessages rabbitMessage)
+        public void DeQueueMessages(RabbitMessages rabbitMessage)
         {
             ConnectionFactory factory = new ConnectionFactory();
             QueueMessage queueMessage = new QueueMessage();
@@ -164,7 +167,6 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
                     }
                 }
             }
-            return queueMessage;
         }
         public HttpResponseMessage PurgeQueue()
         {
