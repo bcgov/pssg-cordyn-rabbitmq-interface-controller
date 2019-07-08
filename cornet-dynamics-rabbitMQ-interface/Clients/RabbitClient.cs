@@ -18,13 +18,11 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
     {
         private readonly String routingKey = ConfigurationManager.FetchConfig("RabbitMq:MainQueue:Route");
         private readonly String exchange = ConfigurationManager.FetchConfig("RabbitMq:MainQueue:Exchange");
-        private readonly String queue = ConfigurationManager.FetchConfig("RabbitMq:MainQueue:Queue");
         private readonly String username = ConfigurationManager.FetchConfig("RabbitMq:Authentication:Username");
         private readonly String password = ConfigurationManager.FetchConfig("RabbitMq:Authentication:Password");
         //Parking Lot settings
         private readonly String parkingLotQueue = ConfigurationManager.FetchConfig("RabbitMq:ParkingQueue:Queue");
         private readonly String parkingLotExchange = ConfigurationManager.FetchConfig("RabbitMq:ParkingQueue:Exchange");
-        private readonly String parkingLotRoute = ConfigurationManager.FetchConfig("RabbitMq:ParkingQueue:Route");
 
         private readonly String rabbitGetQueueItemsEndpoint = ConfigurationManager.FetchConfig("RabbitMq:Endpoints:ParkingLotGet");
         private readonly String rabbitDeleteQueueMessages = ConfigurationManager.FetchConfig("RabbitMq:Endoints:ParkingLotPurge");
@@ -36,7 +34,7 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
         public RabbitMessages GetMessages()
         {
             RabbitMessages rabbitMessages = new RabbitMessages();
-            rabbitMessages.messages = new List<QueueMessage>();
+            rabbitMessages.messages = new List<ParkingLotMessage>();
             using (HttpClient httpClient = new HttpClient())
             {
                 byte[] byteArray = Encoding.ASCII.GetBytes(String.Format("{0}:{1}", username, password));
@@ -46,12 +44,7 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
                     String respData = httpResponseMessage.Content.ReadAsStringAsync().Result;
-                    List<ParkingLotMessage> parkingLotMessages = JsonConvert.DeserializeObject<List<ParkingLotMessage>>(respData);
-                    foreach (ParkingLotMessage parkingLotMessage in parkingLotMessages)
-                    {
-                        QueueMessage queueMessage = JsonConvert.DeserializeObject<QueueMessage>(parkingLotMessage.payload);
-                        rabbitMessages.messages.Add(queueMessage);
-                    }
+                    rabbitMessages.messages = JsonConvert.DeserializeObject<List<ParkingLotMessage>>(respData); 
                 } 
                 else
                 {

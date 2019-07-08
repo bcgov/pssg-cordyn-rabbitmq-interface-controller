@@ -1,5 +1,6 @@
 ﻿using cornet_dynamics_rabbitMQ_interface.Clients;
 using cornet_dynamics_rabbitMQ_interface.Objects;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,12 +22,13 @@ namespace cornet_dynamics_rabbitMQ_interface.Services
             RabbitClient rabbitClient = new RabbitClient();
             RabbitMessages rabbitMessages = rabbitClient.GetMessages();
             RabbitMessages retRabbitMessages = new RabbitMessages();
-            retRabbitMessages.messages = new List<QueueMessage>();
-            foreach (QueueMessage queueMessage in rabbitMessages.messages)
+            retRabbitMessages.messages = new List<ParkingLotMessage>();
+            foreach (ParkingLotMessage parkingLotMessage in rabbitMessages.messages)
             {
+                QueueMessage queueMessage = JsonConvert.DeserializeObject<QueueMessage>(parkingLotMessage.payload);
                 if (queueMessage.eventId == id && queueMessage.guid == guid)
                 {
-                    retRabbitMessages.messages.Add(queueMessage);
+                    retRabbitMessages.messages.Add(parkingLotMessage);
                 }
             }
             return retRabbitMessages;
