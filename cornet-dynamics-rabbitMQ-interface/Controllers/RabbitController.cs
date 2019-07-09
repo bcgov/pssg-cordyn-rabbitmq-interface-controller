@@ -14,6 +14,12 @@ namespace cornet_dynamics_rabbitMQ_interface.Controllers
     [ApiController]
     public class RabbitController : ControllerBase
     {
+        /// <summary>
+        /// Get a list of message on a rabbitmq queue
+        /// </summary>
+        /// <returns>
+        /// List of messages from the queue
+        /// </returns>
         [HttpGet]
         [Route("messages")]
         public RabbitMessages GetMessages()
@@ -22,7 +28,14 @@ namespace cornet_dynamics_rabbitMQ_interface.Controllers
             RabbitService rabbitService = new RabbitService();
             return rabbitService.GetRabbitMessages();
         }
-
+         /// <summary>
+         /// Get list of messages for a given id/guid
+         /// </summary>
+         /// <param name="id">search primary key</param>
+         /// <param name="guid">search guid</param>
+         /// <returns>
+         /// List of rabbit messages
+         /// </returns>
         [HttpGet]
         [Route("message")]
         public RabbitMessages Get([FromQuery] string id,[FromQuery] string guid)
@@ -31,7 +44,14 @@ namespace cornet_dynamics_rabbitMQ_interface.Controllers
             RabbitService rabbitService = new RabbitService();
             return rabbitService.GetRabbitMessageById(id, guid);
         }
-
+        /// <summary>
+        /// Re-queue a message
+        /// </summary>
+        /// <param name="id">search primary key</param>
+        /// <param name="guid">search guid</param>
+        /// <returns>
+        /// Ok or not found
+        /// </returns>
         [HttpPost]
         [Route("requeue")]
         public IActionResult ReQueuePost([FromQuery] string id, [FromQuery] string guid)
@@ -47,6 +67,12 @@ namespace cornet_dynamics_rabbitMQ_interface.Controllers
                 return NotFound("Message not found");
             }
         }
+        /// <summary>
+        /// Move all messages from one queue to another
+        /// </summary>
+        /// <returns>
+        /// Ok or notfound
+        /// </returns>
         [HttpPost]
         [Route("requeueall")]
         public IActionResult ReQueueMultiplePost()
@@ -55,7 +81,7 @@ namespace cornet_dynamics_rabbitMQ_interface.Controllers
             RabbitService rabbitService = new RabbitService();
             if (rabbitService.ReQueueMessages())
             {
-                return Ok("Message has been de-queued");
+                return Ok("Messages has been re-queued");
             }
             else
             {
@@ -63,6 +89,14 @@ namespace cornet_dynamics_rabbitMQ_interface.Controllers
             }
 
         }
+        /// <summary>
+        /// Remove a message from a queue
+        /// </summary>
+        /// <param name="id">search primary key</param>
+        /// <param name="guid">search guid</param>
+        /// <returns>
+        /// Ok or not found
+        /// </returns>
         [HttpDelete]
         [Route("deletemessage")]
         public IActionResult DeleteMessagePost([FromQuery] string id, [FromQuery] string guid)
@@ -78,14 +112,26 @@ namespace cornet_dynamics_rabbitMQ_interface.Controllers
                 return NotFound("Message not found nothing removed from queue");
             }
         }
+        /// <summary>
+        /// Delete all messages from a queue
+        /// </summary>
+        /// <returns>
+        /// Return ok on success or bad request when failed
+        /// </returns>
         [HttpDelete]
         [Route("deletemessages")]
         public IActionResult DeleteMessagesPost()
         {
             Console.WriteLine("{0}: Queue purge message request has been recieved. {1}", DateTime.Now, Environment.NewLine);
             RabbitService rabbitService = new RabbitService();
-            rabbitService.DeleteMessages();
-            return Ok("Queue has been purged");
+            if (rabbitService.DeleteMessages().IsSuccessStatusCode)
+            {
+                return Ok("Queue has been purged");
+            }
+            else
+            {
+                return BadRequest("Delete failed");
+            }
         }
     }
 }
