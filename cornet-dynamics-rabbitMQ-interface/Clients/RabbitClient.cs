@@ -31,6 +31,12 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
         private readonly String encoding = ConfigurationManager.FetchConfig("RabbitMq:Settings:Encoding");
         private readonly int truncate = int.Parse(ConfigurationManager.FetchConfig("RabbitMq:Settings:Truncate"));
         private readonly String ackmode = ConfigurationManager.FetchConfig("RabbitMq:Settings:Ackmode");
+        /// <summary>
+        /// Api call to rabbitmq
+        /// </summary>
+        /// <returns>
+        /// Return all messages in the queue
+        /// </returns>
         public RabbitMessages GetMessages()
         {
             RabbitMessages rabbitMessages = new RabbitMessages();
@@ -54,31 +60,43 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
             return rabbitMessages;
         }
         /// <summary>
-        /// We need to find the messageand move it to the mainqueue
+        /// Place message onto queue
         /// </summary>
-        /// <param name="rabbitObject"></param>
-        /// <param name="exchange"></param>
-        /// <param name="route"></param>
-        /// <returns></returns>
+        /// <param name="queueMessage">message</param>
+        /// <returns>
+        /// Return a ok or bad request
+        /// </returns>
         public HttpResponseMessage QueueRabbitMessage(QueueMessage queueMessage)
         {
             ConnectionFactory factory = new ConnectionFactory();
             factory.UserName = username;
             factory.Password = password;
             factory.HostName = rabbitUri;
-            using (IConnection conn = factory.CreateConnection())
-            {
-                IModel channel = conn.CreateModel();
-                var properties = channel.CreateBasicProperties();
-                properties.Persistent = false;
-                Dictionary<string, object> dictionary = new Dictionary<string, object>();
-                dictionary.Add("error-count", 0);
-                properties.Headers = dictionary;
-                channel.ExchangeDeclare(exchange, ExchangeType.Direct, true);
-                channel.BasicPublish(exchange, routingKey, properties, Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queueMessage)));
+            try {
+                using (IConnection conn = factory.CreateConnection())
+                {
+                    IModel channel = conn.CreateModel();
+                    var properties = channel.CreateBasicProperties();
+                    properties.Persistent = false;
+                    Dictionary<string, object> dictionary = new Dictionary<string, object>();
+                    dictionary.Add("error-count", 0);
+                    properties.Headers = dictionary;
+                    channel.ExchangeDeclare(exchange, ExchangeType.Direct, true);
+                    channel.BasicPublish(exchange, routingKey, properties, Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queueMessage)));
+                }
+                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             }
-            return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+            }
         }
+        /// <summary>
+        /// Re-queue a list of messages
+        /// </summary>
+        /// <param name="rabbitMessage">rabbit message object containing a list of messages</param>
+        /// <returns></returns>
         public HttpResponseMessage QueueRabbitMessages(RabbitMessages rabbitMessage)
         {
             ConnectionFactory factory = new ConnectionFactory();
@@ -94,17 +112,26 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
                 dictionary.Add("error-count", 0);
                 properties.Headers = dictionary;
                 channel.ExchangeDeclare(exchange, ExchangeType.Direct, true);
-                foreach(QueueMessage queueMessage in rabbitMessage.messages) { 
-                    channel.BasicPublish(exchange, routingKey, properties, Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queueMessage)));
+                foreach(ParkingLotMessage parkingLotMessage in rabbitMessage.messages) {
+                    JObject jsonObject = JsonConvert.DeserializeObject<JObject>(parkingLotMessage.payload);
+                    channel.BasicPublish(exchange, routingKey, properties, Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(jsonObject)));
                 }
             }
             return new HttpResponseMessage();
         }
+        /// <summary>
+        /// De queue a single message
+        /// </summary>
+        /// <param name="id">Primary key of the message</param>
+        /// <param name="guid">generated guid of the message</param>
+        /// <returns>
+        /// The message object that has been de-queued
+        /// </returns>
         public QueueMessage DeQueueMessage(String id, String guid)
         {
             ConnectionFactory factory = new ConnectionFactory();
-            bool found = false;
             QueueMessage queueMessage = new QueueMessage();
+            QueueMessage returnMessage = null;
             factory.UserName = username;
             factory.Password = password;
             factory.HostName = rabbitUri;
@@ -120,24 +147,21 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
                     {
                         //Ack the message to dequeue
                         channel.BasicAck(result.DeliveryTag, false);
-                        found = true;
+                        returnMessage = queueMessage;
                         //Exit the loop
                         break;
                     }
                 }
 
             }
-            if (found)
-            {
-                return queueMessage;
-            }
-            else
-            {
-                return null;
-            }
-
-            
+            return returnMessage;
         }
+        /// <summary>
+        /// De-queue a list of messages 
+        /// </summary>
+        /// <param name="rabbitMessage">
+        /// list of messages
+        /// </param>
         public void DeQueueMessages(RabbitMessages rabbitMessage)
         {
             ConnectionFactory factory = new ConnectionFactory();
@@ -153,7 +177,8 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
                 {
                     byte[] body = result.Body;
                     queueMessage = JsonConvert.DeserializeObject<QueueMessage>(System.Text.Encoding.UTF8.GetString(body, 0, body.Length));
-                    if (rabbitMessage.messages.Find(qm => qm.eventId == queueMessage.eventId && qm.guid == queueMessage.guid) != null)
+                    //In a future refactor we will move the id to the header of the message. So we can compare the headers id values and then we are not dependent on the message itslef
+                    if (rabbitMessage.messages.Find(qm => JsonConvert.DeserializeObject<QueueMessage>(qm.payload).eventId == queueMessage.eventId && JsonConvert.DeserializeObject<QueueMessage>(qm.payload).guid == queueMessage.guid) != null)
                     {
                         //Ack the message to dequeue
                         channel.BasicAck(result.DeliveryTag, false);
@@ -161,6 +186,12 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
                 }
             }
         }
+        /// <summary>
+        /// Call api to remove all messages from the queue
+        /// </summary>
+        /// <returns>
+        /// Returns response from api call
+        /// </returns>
         public HttpResponseMessage PurgeQueue()
         {
             using (HttpClient httpClient = new HttpClient())
