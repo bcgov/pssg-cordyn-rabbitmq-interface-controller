@@ -1,1 +1,1 @@
-DOTNET_STARTUP_PROJECT=cornet=dynamics-rabbitMQ-interface/cornet=dynamics-rabbitMQ-interface.csproj
+DOTNET_STARTUP_PROJECT=cornet-dynamics-rabbitMQ-interface/cornet-dynamics-rabbitMQ-interface.csproj
