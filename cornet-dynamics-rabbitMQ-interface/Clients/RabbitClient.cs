@@ -3,14 +3,11 @@ using cornet_dynamics_rabbitMQ_interface.Util;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace cornet_dynamics_rabbitMQ_interface.Clients
 {
@@ -79,7 +76,7 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
                     var properties = channel.CreateBasicProperties();
                     properties.Persistent = false;
                     Dictionary<string, object> dictionary = new Dictionary<string, object>();
-                    dictionary.Add("error-count", 0);
+                    dictionary.Add("x-death", 0);
                     properties.Headers = dictionary;
                     channel.ExchangeDeclare(exchange, ExchangeType.Direct, true);
                     channel.BasicPublish(exchange, routingKey, properties, Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queueMessage)));
@@ -109,7 +106,7 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
                 var properties = channel.CreateBasicProperties();
                 properties.Persistent = false;
                 Dictionary<string, object> dictionary = new Dictionary<string, object>();
-                dictionary.Add("error-count", 0);
+                dictionary.Add("x-death", 0);
                 properties.Headers = dictionary;
                 channel.ExchangeDeclare(exchange, ExchangeType.Direct, true);
                 foreach(ParkingLotMessage parkingLotMessage in rabbitMessage.messages) {

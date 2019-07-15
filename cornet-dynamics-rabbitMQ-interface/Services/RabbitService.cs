@@ -3,9 +3,7 @@ using cornet_dynamics_rabbitMQ_interface.Objects;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace cornet_dynamics_rabbitMQ_interface.Services
 {
