@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
 namespace cornet_dynamics_rabbitMQ_interface.Clients
@@ -22,7 +23,7 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
         private readonly String parkingLotExchange = ConfigurationManager.FetchConfig("RabbitMq:ParkingQueue:Exchange");
 
         private readonly String rabbitGetQueueItemsEndpoint = ConfigurationManager.FetchConfig("RabbitMq:Endpoints:ParkingLotGet");
-        private readonly String rabbitDeleteQueueMessages = ConfigurationManager.FetchConfig("RabbitMq:Endoints:ParkingLotPurge");
+        private readonly String rabbitDeleteQueueMessages = ConfigurationManager.FetchConfig("RabbitMq:Endpoints:ParkingLotPurge");
         private readonly String rabbitUri = ConfigurationManager.FetchConfig("RabbitMq:Endpoints:RabbitInstance");
         private readonly int count = int.Parse(ConfigurationManager.FetchConfig("RabbitMq:Settings:Count"));
         private readonly String encoding = ConfigurationManager.FetchConfig("RabbitMq:Settings:Encoding");
@@ -63,7 +64,7 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
         /// <returns>
         /// Return a ok or bad request
         /// </returns>
-        public HttpResponseMessage QueueRabbitMessage(QueueMessage queueMessage)
+        public HttpResponseMessage QueueRabbitMessage(RabbitMessages rabbitMessages)
         {
             ConnectionFactory factory = new ConnectionFactory();
             factory.UserName = username;
@@ -73,13 +74,17 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
                 using (IConnection conn = factory.CreateConnection())
                 {
                     IModel channel = conn.CreateModel();
-                    var properties = channel.CreateBasicProperties();
-                    properties.Persistent = false;
-                    Dictionary<string, object> dictionary = new Dictionary<string, object>();
-                    dictionary.Add("x-death", 0);
-                    properties.Headers = dictionary;
                     channel.ExchangeDeclare(exchange, ExchangeType.Direct, true);
-                    channel.BasicPublish(exchange, routingKey, properties, Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(queueMessage)));
+                    foreach (ParkingLotMessage parkingLotMessage in rabbitMessages.messages)
+                    {
+                        var properties = channel.CreateBasicProperties();
+                        properties.Persistent = false;
+                        Dictionary<string, object> dictionary = new Dictionary<string, object>();
+                        dictionary.Add("x-death", 0);
+                        dictionary.Add("x-request-id", parkingLotMessage.properties.headerItems.requestId);
+                        properties.Headers = dictionary;
+                        channel.BasicPublish(exchange, routingKey, properties, Encoding.UTF8.GetBytes(parkingLotMessage.payload));
+                    }
                 }
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             }
@@ -105,12 +110,15 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
                 IModel channel = conn.CreateModel();
                 var properties = channel.CreateBasicProperties();
                 properties.Persistent = false;
-                Dictionary<string, object> dictionary = new Dictionary<string, object>();
-                dictionary.Add("x-death", 0);
-                properties.Headers = dictionary;
+
                 channel.ExchangeDeclare(exchange, ExchangeType.Direct, true);
                 foreach(ParkingLotMessage parkingLotMessage in rabbitMessage.messages) {
                     JObject jsonObject = JsonConvert.DeserializeObject<JObject>(parkingLotMessage.payload);
+                    BinaryFormatter binaryFormatter = new BinaryFormatter();
+                    Dictionary<string, object> dictionary = new Dictionary<string, object>();
+                    dictionary.Add("x-death", 0);
+                    dictionary.Add("x-request-id", parkingLotMessage.properties.headerItems.requestId);
+                    properties.Headers = dictionary;
                     channel.BasicPublish(exchange, routingKey, properties, Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(jsonObject)));
                 }
             }
@@ -124,11 +132,12 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
         /// <returns>
         /// The message object that has been de-queued
         /// </returns>
-        public QueueMessage DeQueueMessage(String id, String guid)
+        public RabbitMessages DeQueueMessage(String id)
         {
             ConnectionFactory factory = new ConnectionFactory();
+            RabbitMessages rabbitMessages = new RabbitMessages();
+            rabbitMessages.messages = new List<ParkingLotMessage>();
             QueueMessage queueMessage = new QueueMessage();
-            QueueMessage returnMessage = null;
             factory.UserName = username;
             factory.Password = password;
             factory.HostName = rabbitUri;
@@ -140,18 +149,25 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
                 {
                     byte[] body = result.Body;
                     queueMessage = JsonConvert.DeserializeObject<QueueMessage>(System.Text.Encoding.UTF8.GetString(body, 0, body.Length));
-                    if (queueMessage.eventId == id && queueMessage.guid == guid)
+                    if (System.Text.Encoding.UTF8.GetString((byte[])result.BasicProperties.Headers["x-request-id"]) == id)
                     {
                         //Ack the message to dequeue
                         channel.BasicAck(result.DeliveryTag, false);
-                        returnMessage = queueMessage;
-                        //Exit the loop
-                        break;
+                        ParkingLotMessage parkingLotMessage = new ParkingLotMessage();
+                        parkingLotMessage.payload = System.Text.Encoding.UTF8.GetString(body, 0, body.Length);
+                        parkingLotMessage.properties = new PropertiesHeader {
+                            headerItems = new HeaderItems {
+                                retryCount = 0,
+                                requestId = System.Text.Encoding.UTF8.GetString((byte[])result.BasicProperties.Headers["x-request-id"])
+                            }
+                        };
+
+                        rabbitMessages.messages.Add(parkingLotMessage);
                     }
                 }
 
             }
-            return returnMessage;
+            return rabbitMessages;
         }
         /// <summary>
         /// De-queue a list of messages 
@@ -172,10 +188,9 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
                 channel.ExchangeDeclare(parkingLotExchange, ExchangeType.Direct, true);
                 for (BasicGetResult result; (result = channel.BasicGet(parkingLotQueue, false)) != null;)
                 {
-                    byte[] body = result.Body;
-                    queueMessage = JsonConvert.DeserializeObject<QueueMessage>(System.Text.Encoding.UTF8.GetString(body, 0, body.Length));
+
                     //In a future refactor we will move the id to the header of the message. So we can compare the headers id values and then we are not dependent on the message itslef
-                    if (rabbitMessage.messages.Find(qm => JsonConvert.DeserializeObject<QueueMessage>(qm.payload).eventId == queueMessage.eventId && JsonConvert.DeserializeObject<QueueMessage>(qm.payload).guid == queueMessage.guid) != null)
+                    if (rabbitMessage.messages.Find(pm => pm.properties.headerItems.requestId == System.Text.Encoding.UTF8.GetString((byte[])result.BasicProperties.Headers["x-request-id"])) != null)
                     {
                         //Ack the message to dequeue
                         channel.BasicAck(result.DeliveryTag, false);

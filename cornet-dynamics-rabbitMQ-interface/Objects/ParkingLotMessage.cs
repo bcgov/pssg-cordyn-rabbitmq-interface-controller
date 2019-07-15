@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using RabbitMQ.Client;
 using System;
 
 namespace cornet_dynamics_rabbitMQ_interface.Objects
@@ -16,7 +18,7 @@ namespace cornet_dynamics_rabbitMQ_interface.Objects
         [JsonProperty("message_count")]
         public int messageCount { get; set; }
         [JsonProperty("properties")]
-        public byte[] properties { get; set; }
+        public PropertiesHeader properties { get; set; }
         [JsonProperty("payload")]
         public String payload { get; set; }
         [JsonProperty("payload_encoding")]
