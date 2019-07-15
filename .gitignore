@@ -341,3 +341,4 @@ healthchecksdb
 /cornet-dynamics-adapter/appsettings.Development.json
 /cornet-dynamics-rabbitMQ-interface/appsettings.json
 /cornet-dynamics-rabbitMQ-interface/appsettings.Development.json
+/cornet-dynamics-rabbitMQ-interface/appsettings.local.json

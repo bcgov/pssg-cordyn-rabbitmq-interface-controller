@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using cornet_dynamics_rabbitMQ_interface.Objects;
 using cornet_dynamics_rabbitMQ_interface.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
 
 namespace cornet_dynamics_rabbitMQ_interface.Controllers
 {
@@ -38,11 +33,11 @@ namespace cornet_dynamics_rabbitMQ_interface.Controllers
          /// </returns>
         [HttpGet]
         [Route("message")]
-        public RabbitMessages Get([FromQuery] string id,[FromQuery] string guid)
+        public RabbitMessages Get([FromQuery] string id)
         {
-            Console.WriteLine("{0}: Get message request has been recieved. Requested id: {1}, guid: {2} {3}", DateTime.Now, id, guid, Environment.NewLine);
+            Console.WriteLine("{0}: Get message request has been recieved. Requested id: {1}, {2}", DateTime.Now, id, Environment.NewLine);
             RabbitService rabbitService = new RabbitService();
-            return rabbitService.GetRabbitMessageById(id, guid);
+            return rabbitService.GetRabbitMessageById(id);
         }
         /// <summary>
         /// Re-queue a message
@@ -54,11 +49,11 @@ namespace cornet_dynamics_rabbitMQ_interface.Controllers
         /// </returns>
         [HttpPost]
         [Route("requeue")]
-        public IActionResult ReQueuePost([FromQuery] string id, [FromQuery] string guid)
+        public IActionResult ReQueuePost([FromQuery] string id)
         {
-            Console.WriteLine("{0}: Re-Queue message request has been recieved. Requested id: {1}, guid: {2} {3}", DateTime.Now, id, guid, Environment.NewLine);
+            Console.WriteLine("{0}: Re-Queue message request has been recieved. Requested id: {1}, {2}", DateTime.Now, id, Environment.NewLine);
             RabbitService rabbitService = new RabbitService();
-            if (rabbitService.ReQueueMessage(id, guid))
+            if (rabbitService.ReQueueMessage(id))
             {
                 return Ok("Message has been re-queued");
             }
@@ -103,7 +98,7 @@ namespace cornet_dynamics_rabbitMQ_interface.Controllers
         {
             Console.WriteLine("{0}: De-Queue message request has been recieved. Requested id: {1}, guid: {2} {3}", DateTime.Now, id, guid, Environment.NewLine);
             RabbitService rabbitService = new RabbitService();
-            if (rabbitService.DeleteMessage(id, guid))
+            if (rabbitService.DeleteMessage(id))
             {
                 return Ok("Message has been de-queued");
             }

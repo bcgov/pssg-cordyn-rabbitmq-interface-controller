@@ -3,9 +3,7 @@ using cornet_dynamics_rabbitMQ_interface.Objects;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace cornet_dynamics_rabbitMQ_interface.Services
 {
@@ -27,11 +25,10 @@ namespace cornet_dynamics_rabbitMQ_interface.Services
         /// Search for messages
         /// </summary>
         /// <param name="id">search primary key</param>
-        /// <param name="guid">search guid</param>
         /// <returns>
         /// List of resulting messages
         /// </returns>
-        public RabbitMessages GetRabbitMessageById(String id, String guid)
+        public RabbitMessages GetRabbitMessageById(String id)
         {
             RabbitClient rabbitClient = new RabbitClient();
             RabbitMessages rabbitMessages = rabbitClient.GetMessages();
@@ -39,8 +36,7 @@ namespace cornet_dynamics_rabbitMQ_interface.Services
             retRabbitMessages.messages = new List<ParkingLotMessage>();
             foreach (ParkingLotMessage parkingLotMessage in rabbitMessages.messages)
             {
-                QueueMessage queueMessage = JsonConvert.DeserializeObject<QueueMessage>(parkingLotMessage.payload);
-                if (queueMessage.eventId == id && queueMessage.guid == guid)
+                if (parkingLotMessage.properties.headerItems.requestId == id)
                 {
                     retRabbitMessages.messages.Add(parkingLotMessage);
                 }
@@ -55,13 +51,14 @@ namespace cornet_dynamics_rabbitMQ_interface.Services
         /// <returns>
         /// Success or failure
         /// </returns>
-        public bool ReQueueMessage(String id, String guid)
+        public bool ReQueueMessage(String id)
         {
             RabbitClient rabbitClient = new RabbitClient();
-            QueueMessage queueMessage = rabbitClient.DeQueueMessage(id, guid);
-            if (queueMessage != null)
+            RabbitMessages rabbitMessages = rabbitClient.DeQueueMessage(id);
+            if (rabbitMessages.messages.Count > 0)
             {
-                HttpResponseMessage httpResponseMessage = rabbitClient.QueueRabbitMessage(queueMessage);
+                
+                HttpResponseMessage httpResponseMessage = rabbitClient.QueueRabbitMessage(rabbitMessages);
                 return httpResponseMessage.IsSuccessStatusCode;
             }
             else
@@ -101,11 +98,11 @@ namespace cornet_dynamics_rabbitMQ_interface.Services
         /// <returns>
         /// success or failure
         /// </returns>
-        public bool DeleteMessage(String id, String guid)
+        public bool DeleteMessage(String id)
         {
             RabbitClient rabbitClient = new RabbitClient();
-            QueueMessage queueMessage= rabbitClient.DeQueueMessage(id, guid);
-            if (queueMessage != null)
+            RabbitMessages rabbitMessages = rabbitClient.DeQueueMessage(id);
+            if (rabbitMessages.messages.Count > 0)
             {
                 return true;
             }
