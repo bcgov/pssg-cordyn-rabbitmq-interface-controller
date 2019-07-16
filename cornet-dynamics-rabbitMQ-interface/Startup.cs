@@ -14,7 +14,7 @@ namespace cornet_dynamics_rabbitMQ_interface
         }
 
         public IConfiguration Configuration { get; }
-
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -22,6 +22,17 @@ namespace cornet_dynamics_rabbitMQ_interface
             services.AddSwaggerDocument(c =>
             {
                 c.Title = "Rabbit MQ Interface";
+            });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                builder =>
+                {
+                    builder.AllowAnyHeader()
+                                .AllowAnyMethod()
+                                .AllowAnyOrigin(); 
+                });
             });
         }
 
@@ -39,6 +50,7 @@ namespace cornet_dynamics_rabbitMQ_interface
             );
             app.UseSwaggerUi3();
 
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseMvc();
         }

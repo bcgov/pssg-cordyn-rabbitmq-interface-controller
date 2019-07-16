@@ -12,5 +12,7 @@ namespace cornet_dynamics_rabbitMQ_interface.Objects
         public int retryCount { get; set; }
         [JsonProperty("x-request-id")]
         public String requestId { get; set; }
+        [JsonProperty("date")]
+        public String date { get; set; }
     }
 }

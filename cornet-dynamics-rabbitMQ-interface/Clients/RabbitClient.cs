@@ -82,6 +82,7 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
                         Dictionary<string, object> dictionary = new Dictionary<string, object>();
                         dictionary.Add("x-death", 0);
                         dictionary.Add("x-request-id", parkingLotMessage.properties.headerItems.requestId);
+                        dictionary.Add("date", parkingLotMessage.properties.headerItems.date);
                         properties.Headers = dictionary;
                         channel.BasicPublish(exchange, routingKey, properties, Encoding.UTF8.GetBytes(parkingLotMessage.payload));
                     }
@@ -118,6 +119,7 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
                     Dictionary<string, object> dictionary = new Dictionary<string, object>();
                     dictionary.Add("x-death", 0);
                     dictionary.Add("x-request-id", parkingLotMessage.properties.headerItems.requestId);
+                    dictionary.Add("date", parkingLotMessage.properties.headerItems.date);
                     properties.Headers = dictionary;
                     channel.BasicPublish(exchange, routingKey, properties, Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(jsonObject)));
                 }
@@ -158,7 +160,8 @@ namespace cornet_dynamics_rabbitMQ_interface.Clients
                         parkingLotMessage.properties = new PropertiesHeader {
                             headerItems = new HeaderItems {
                                 retryCount = 0,
-                                requestId = System.Text.Encoding.UTF8.GetString((byte[])result.BasicProperties.Headers["x-request-id"])
+                                requestId = System.Text.Encoding.UTF8.GetString((byte[])result.BasicProperties.Headers["x-request-id"]),
+                                date = System.Text.Encoding.UTF8.GetString((byte[])result.BasicProperties.Headers["date"])
                             }
                         };
 

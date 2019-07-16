@@ -2,9 +2,11 @@
 using cornet_dynamics_rabbitMQ_interface.Objects;
 using cornet_dynamics_rabbitMQ_interface.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Cors;
 
 namespace cornet_dynamics_rabbitMQ_interface.Controllers
 {
+    [EnableCors]
     [Route("api/[controller]")]
     [ApiController]
     public class RabbitController : ControllerBase
