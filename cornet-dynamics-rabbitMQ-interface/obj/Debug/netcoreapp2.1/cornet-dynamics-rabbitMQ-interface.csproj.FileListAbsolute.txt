@@ -1,0 +1,28 @@
+C:\Users\177141\source\repos\cornet-dynamics-rabbitMQ-interface\cornet-dynamics-rabbitMQ-interface\bin\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.deps.json
+C:\Users\177141\source\repos\cornet-dynamics-rabbitMQ-interface\cornet-dynamics-rabbitMQ-interface\bin\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.runtimeconfig.json
+C:\Users\177141\source\repos\cornet-dynamics-rabbitMQ-interface\cornet-dynamics-rabbitMQ-interface\bin\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.runtimeconfig.dev.json
+C:\Users\177141\source\repos\cornet-dynamics-rabbitMQ-interface\cornet-dynamics-rabbitMQ-interface\bin\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.dll
+C:\Users\177141\source\repos\cornet-dynamics-rabbitMQ-interface\cornet-dynamics-rabbitMQ-interface\obj\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.csprojAssemblyReference.cache
+C:\Users\177141\source\repos\cornet-dynamics-rabbitMQ-interface\cornet-dynamics-rabbitMQ-interface\obj\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.csproj.CoreCompileInputs.cache
+C:\Users\177141\source\repos\cornet-dynamics-rabbitMQ-interface\cornet-dynamics-rabbitMQ-interface\obj\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.RazorAssemblyInfo.cache
+C:\Users\177141\source\repos\cornet-dynamics-rabbitMQ-interface\cornet-dynamics-rabbitMQ-interface\obj\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.RazorAssemblyInfo.cs
+C:\Users\177141\source\repos\cornet-dynamics-rabbitMQ-interface\cornet-dynamics-rabbitMQ-interface\obj\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.AssemblyInfoInputs.cache
+C:\Users\177141\source\repos\cornet-dynamics-rabbitMQ-interface\cornet-dynamics-rabbitMQ-interface\obj\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.AssemblyInfo.cs
+C:\Users\177141\source\repos\cornet-dynamics-rabbitMQ-interface\cornet-dynamics-rabbitMQ-interface\obj\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.RazorTargetAssemblyInfo.cache
+C:\Users\177141\source\repos\cornet-dynamics-rabbitMQ-interface\cornet-dynamics-rabbitMQ-interface\bin\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.pdb
+C:\Users\177141\source\repos\cornet-dynamics-rabbitMQ-interface\cornet-dynamics-rabbitMQ-interface\obj\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.dll
+C:\Users\177141\source\repos\cornet-dynamics-rabbitMQ-interface\cornet-dynamics-rabbitMQ-interface\obj\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.pdb
+C:\Users\177141\Documents\Visual Studio 2019\Projects\pssg-cordyn-rabbitmq-interface-controller\cornet-dynamics-rabbitMQ-interface\bin\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.deps.json
+C:\Users\177141\Documents\Visual Studio 2019\Projects\pssg-cordyn-rabbitmq-interface-controller\cornet-dynamics-rabbitMQ-interface\bin\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.runtimeconfig.json
+C:\Users\177141\Documents\Visual Studio 2019\Projects\pssg-cordyn-rabbitmq-interface-controller\cornet-dynamics-rabbitMQ-interface\bin\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.runtimeconfig.dev.json
+C:\Users\177141\Documents\Visual Studio 2019\Projects\pssg-cordyn-rabbitmq-interface-controller\cornet-dynamics-rabbitMQ-interface\bin\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.dll
+C:\Users\177141\Documents\Visual Studio 2019\Projects\pssg-cordyn-rabbitmq-interface-controller\cornet-dynamics-rabbitMQ-interface\bin\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.pdb
+C:\Users\177141\Documents\Visual Studio 2019\Projects\pssg-cordyn-rabbitmq-interface-controller\cornet-dynamics-rabbitMQ-interface\obj\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.csprojAssemblyReference.cache
+C:\Users\177141\Documents\Visual Studio 2019\Projects\pssg-cordyn-rabbitmq-interface-controller\cornet-dynamics-rabbitMQ-interface\obj\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.csproj.CoreCompileInputs.cache
+C:\Users\177141\Documents\Visual Studio 2019\Projects\pssg-cordyn-rabbitmq-interface-controller\cornet-dynamics-rabbitMQ-interface\obj\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.RazorAssemblyInfo.cache
+C:\Users\177141\Documents\Visual Studio 2019\Projects\pssg-cordyn-rabbitmq-interface-controller\cornet-dynamics-rabbitMQ-interface\obj\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.RazorAssemblyInfo.cs
+C:\Users\177141\Documents\Visual Studio 2019\Projects\pssg-cordyn-rabbitmq-interface-controller\cornet-dynamics-rabbitMQ-interface\obj\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.AssemblyInfoInputs.cache
+C:\Users\177141\Documents\Visual Studio 2019\Projects\pssg-cordyn-rabbitmq-interface-controller\cornet-dynamics-rabbitMQ-interface\obj\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.AssemblyInfo.cs
+C:\Users\177141\Documents\Visual Studio 2019\Projects\pssg-cordyn-rabbitmq-interface-controller\cornet-dynamics-rabbitMQ-interface\obj\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.RazorTargetAssemblyInfo.cache
+C:\Users\177141\Documents\Visual Studio 2019\Projects\pssg-cordyn-rabbitmq-interface-controller\cornet-dynamics-rabbitMQ-interface\obj\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.dll
+C:\Users\177141\Documents\Visual Studio 2019\Projects\pssg-cordyn-rabbitmq-interface-controller\cornet-dynamics-rabbitMQ-interface\obj\Debug\netcoreapp2.1\cornet-dynamics-rabbitMQ-interface.pdb
