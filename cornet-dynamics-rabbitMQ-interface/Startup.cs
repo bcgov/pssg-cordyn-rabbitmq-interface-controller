@@ -30,8 +30,8 @@ namespace cornet_dynamics_rabbitMQ_interface
                 builder =>
                 {
                     builder.AllowAnyHeader()
-                                .AllowAnyMethod()
-                                .AllowAnyOrigin(); 
+                            .AllowAnyMethod()
+                            .AllowAnyOrigin(); 
                 });
             });
         }
