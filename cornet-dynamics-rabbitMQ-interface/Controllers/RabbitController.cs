@@ -57,11 +57,11 @@ namespace cornet_dynamics_rabbitMQ_interface.Controllers
             RabbitService rabbitService = new RabbitService();
             if (rabbitService.ReQueueMessage(id))
             {
-                return Ok("Message has been re-queued");
+                return Ok("{\"message\": \"Message has been re-queued\"}");
             }
             else
             {
-                return NotFound("Message not found");
+                return NotFound("{\"message\": \"Message not found\"}");
             }
         }
         /// <summary>
@@ -78,11 +78,11 @@ namespace cornet_dynamics_rabbitMQ_interface.Controllers
             RabbitService rabbitService = new RabbitService();
             if (rabbitService.ReQueueMessages())
             {
-                return Ok("Messages has been re-queued");
+                return Ok("{\"message\": \"Messages has been re-queued\"}");
             }
             else
             {
-                return NotFound("Not all messages succeeded");
+                return NotFound("{\"message\": \"Not all messages succeeded\"}");
             }
 
         }
@@ -102,11 +102,11 @@ namespace cornet_dynamics_rabbitMQ_interface.Controllers
             RabbitService rabbitService = new RabbitService();
             if (rabbitService.DeleteMessage(id))
             {
-                return Ok("Message has been de-queued");
+                return Ok("{\"message\": \"Message has been de-queued\"}");
             }
             else
             {
-                return NotFound("Message not found nothing removed from queue");
+                return NotFound("{\"message\": \"Message not found nothing removed from queue\"}");
             }
         }
         /// <summary>
@@ -123,11 +123,11 @@ namespace cornet_dynamics_rabbitMQ_interface.Controllers
             RabbitService rabbitService = new RabbitService();
             if (rabbitService.DeleteMessages().IsSuccessStatusCode)
             {
-                return Ok("Queue has been purged");
+                return Ok("{\"message\": \"Queue has been purged\"}");
             }
             else
             {
-                return BadRequest("Delete failed");
+                return BadRequest("{\"message\": \"Delete failed\"}");
             }
         }
     }
