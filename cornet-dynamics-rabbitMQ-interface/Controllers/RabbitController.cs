@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Cors;
 
 namespace cornet_dynamics_rabbitMQ_interface.Controllers
 {
-    [EnableCors]
+    [EnableCors("_myAllowSpecificOrigins")]
     [Route("api/[controller]")]
     [ApiController]
     public class RabbitController : ControllerBase
