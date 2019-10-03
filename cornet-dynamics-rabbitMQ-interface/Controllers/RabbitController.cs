@@ -1,10 +1,9 @@
-﻿using System;
-using cornet_dynamics_rabbitMQ_interface.Objects;
-using cornet_dynamics_rabbitMQ_interface.Services;
+﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Cors;
+using pssg_rabbitmq_interface.Services;
+using System;
 
-namespace cornet_dynamics_rabbitMQ_interface.Controllers
+namespace pssg_rabbitmq_interface.Controllers
 {
     [EnableCors("_myAllowSpecificOrigins")]
     [Route("api/[controller]")]
@@ -19,27 +18,27 @@ namespace cornet_dynamics_rabbitMQ_interface.Controllers
         /// </returns>
         [HttpGet]
         [Route("messages")]
-        public RabbitMessages GetMessages()
+        public IActionResult GetMessages()
         {
             Console.WriteLine("{0}: Get all messages request has been recieved. {1}", DateTime.Now, Environment.NewLine);
             RabbitService rabbitService = new RabbitService();
-            return rabbitService.GetRabbitMessages();
+            return Ok(rabbitService.GetRabbitMessages());
         }
-         /// <summary>
-         /// Get list of messages for a given id/guid
-         /// </summary>
-         /// <param name="id">search primary key</param>
-         /// <param name="guid">search guid</param>
-         /// <returns>
-         /// List of rabbit messages
-         /// </returns>
+        /// <summary>
+        /// Get list of messages for a given id/guid
+        /// </summary>
+        /// <param name="id">search primary key</param>
+        /// <param name="guid">search guid</param>
+        /// <returns>
+        /// List of rabbit messages
+        /// </returns>
         [HttpGet]
         [Route("message")]
-        public RabbitMessages Get([FromQuery] string id)
+        public IActionResult Get([FromQuery] string id)
         {
             Console.WriteLine("{0}: Get message request has been recieved. Requested id: {1}, {2}", DateTime.Now, id, Environment.NewLine);
             RabbitService rabbitService = new RabbitService();
-            return rabbitService.GetRabbitMessageById(id);
+            return Ok(rabbitService.GetRabbitMessageById(id));
         }
         /// <summary>
         /// Re-queue a message

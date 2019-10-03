@@ -1,10 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace cornet_dynamics_rabbitMQ_interface.Objects
+namespace pssg_rabbitmq_interface.Objects
 {
     public class HeaderItems
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 
-namespace cornet_dynamics_rabbitMQ_interface.Objects
+namespace pssg_rabbitmq_interface.Objects
 {
     public class RabbitMessages
     {
