@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using pssg_rabbitmq_interface.Objects;
 using pssg_rabbitmq_interface.Services;
 using System;
 
@@ -22,13 +23,20 @@ namespace pssg_rabbitmq_interface.Controllers
         {
             Console.WriteLine("{0}: Get all messages request has been recieved. {1}", DateTime.Now, Environment.NewLine);
             RabbitService rabbitService = new RabbitService();
-            return Ok(rabbitService.GetRabbitMessages());
+            RabbitMessages messages = rabbitService.GetRabbitMessages();
+            if (messages.messages.Count > 0)
+            {
+                return Ok(messages);
+            }
+            else
+            {
+                return NotFound("{\"message\": \"No messages found\"}");
+            }  
         }
         /// <summary>
         /// Get list of messages for a given id/guid
         /// </summary>
         /// <param name="id">search primary key</param>
-        /// <param name="guid">search guid</param>
         /// <returns>
         /// List of rabbit messages
         /// </returns>
@@ -38,13 +46,20 @@ namespace pssg_rabbitmq_interface.Controllers
         {
             Console.WriteLine("{0}: Get message request has been recieved. Requested id: {1}, {2}", DateTime.Now, id, Environment.NewLine);
             RabbitService rabbitService = new RabbitService();
-            return Ok(rabbitService.GetRabbitMessageById(id));
+            RabbitMessages messages = rabbitService.GetRabbitMessageById(id);
+            if (messages.messages.Count > 0) {
+                return Ok(messages);
+            }
+            else
+            {
+                return NotFound("{\"message\": \"No message found\"}");
+            }
+            
         }
         /// <summary>
         /// Re-queue a message
         /// </summary>
         /// <param name="id">search primary key</param>
-        /// <param name="guid">search guid</param>
         /// <returns>
         /// Ok or not found
         /// </returns>
@@ -77,7 +92,7 @@ namespace pssg_rabbitmq_interface.Controllers
             RabbitService rabbitService = new RabbitService();
             if (rabbitService.ReQueueMessages())
             {
-                return Ok("{\"message\": \"Messages has been re-queued\"}");
+                return Ok("{\"message\": \"Messages have been re-queued\"}");
             }
             else
             {

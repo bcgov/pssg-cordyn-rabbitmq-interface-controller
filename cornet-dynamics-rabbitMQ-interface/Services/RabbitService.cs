@@ -31,18 +31,13 @@ namespace pssg_rabbitmq_interface.Services
         {
             RabbitClient rabbitClient = new RabbitClient();
             RabbitMessages rabbitMessages = rabbitClient.GetMessages();
-            RabbitMessages retRabbitMessages = new RabbitMessages
+            RabbitMessages result = new RabbitMessages
             {
                 messages = new List<ParkingLotMessage>()
             };
-            foreach (ParkingLotMessage parkingLotMessage in rabbitMessages.messages)
-            {
-                if (parkingLotMessage.properties.headerItems.requestId == id)
-                {
-                    retRabbitMessages.messages.Add(parkingLotMessage);
-                }
-            }
-            return retRabbitMessages;
+            result.messages = rabbitMessages.messages.FindAll(parkingLotMessage => parkingLotMessage.properties.headerItems.requestId.Equals(id));
+         
+            return result;
         }
         /// <summary>
         /// Re-queue a message. This removes the message from the parking lot
