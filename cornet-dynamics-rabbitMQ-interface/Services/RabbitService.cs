@@ -1,11 +1,10 @@
-﻿using cornet_dynamics_rabbitMQ_interface.Clients;
-using cornet_dynamics_rabbitMQ_interface.Objects;
-using Newtonsoft.Json;
+﻿using pssg_rabbitmq_interface.Clients;
+using pssg_rabbitmq_interface.Objects;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 
-namespace cornet_dynamics_rabbitMQ_interface.Services
+namespace pssg_rabbitmq_interface.Services
 {
     public class RabbitService
     {
@@ -32,16 +31,13 @@ namespace cornet_dynamics_rabbitMQ_interface.Services
         {
             RabbitClient rabbitClient = new RabbitClient();
             RabbitMessages rabbitMessages = rabbitClient.GetMessages();
-            RabbitMessages retRabbitMessages = new RabbitMessages();
-            retRabbitMessages.messages = new List<ParkingLotMessage>();
-            foreach (ParkingLotMessage parkingLotMessage in rabbitMessages.messages)
+            RabbitMessages result = new RabbitMessages
             {
-                if (parkingLotMessage.properties.headerItems.requestId == id)
-                {
-                    retRabbitMessages.messages.Add(parkingLotMessage);
-                }
-            }
-            return retRabbitMessages;
+                messages = new List<ParkingLotMessage>()
+            };
+            result.messages = rabbitMessages.messages.FindAll(parkingLotMessage => parkingLotMessage.properties.headerItems.requestId.Equals(id));
+         
+            return result;
         }
         /// <summary>
         /// Re-queue a message. This removes the message from the parking lot
@@ -57,7 +53,7 @@ namespace cornet_dynamics_rabbitMQ_interface.Services
             RabbitMessages rabbitMessages = rabbitClient.DeQueueMessage(id);
             if (rabbitMessages.messages.Count > 0)
             {
-                
+
                 HttpResponseMessage httpResponseMessage = rabbitClient.QueueRabbitMessage(rabbitMessages);
                 return httpResponseMessage.IsSuccessStatusCode;
             }
@@ -121,7 +117,7 @@ namespace cornet_dynamics_rabbitMQ_interface.Services
         {
             RabbitClient rabbitClient = new RabbitClient();
             return rabbitClient.PurgeQueue();
-        } 
+        }
 
     }
 }

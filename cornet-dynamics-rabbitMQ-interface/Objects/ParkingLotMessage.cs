@@ -1,13 +1,11 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using RabbitMQ.Client;
 using System;
 
-namespace cornet_dynamics_rabbitMQ_interface.Objects
+namespace pssg_rabbitmq_interface.Objects
 {
     public class ParkingLotMessage
     {
-        [JsonProperty("payload_bytes")]  
+        [JsonProperty("payload_bytes")]
         public int payloadBytes { get; set; }
         [JsonProperty("redelivered")]
         public bool redelivered { get; set; }

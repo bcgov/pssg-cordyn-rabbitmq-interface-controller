@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace cornet_dynamics_rabbitMQ_interface.Util
+namespace pssg_rabbitmq_interface.Util
 {
     public static class ConfigurationManager
     {
@@ -33,7 +33,7 @@ namespace cornet_dynamics_rabbitMQ_interface.Util
 
         public static String FetchConfig(String ConfigKey)
         {
-            String returnValue = "";
+            String returnValue;
             String EnvKey = ConfigKey.Replace(":", "_");
             if (EnvSetting != null && EnvSetting[EnvKey] != null)
             {
@@ -49,7 +49,7 @@ namespace cornet_dynamics_rabbitMQ_interface.Util
             }
             else
             {
-                throw new Exception(String.Format("Configuration or file not found. Key requested {0}", ConfigKey));
+                throw new ArgumentException(String.Format("Configuration or file not found. Key requested {0}", ConfigKey));
             }
             return returnValue;
         }

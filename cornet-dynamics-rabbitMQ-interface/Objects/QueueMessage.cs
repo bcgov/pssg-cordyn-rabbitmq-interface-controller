@@ -2,7 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 
-namespace cornet_dynamics_rabbitMQ_interface.Objects
+namespace pssg_rabbitmq_interface.Objects
 {
     public class QueueMessage
     {

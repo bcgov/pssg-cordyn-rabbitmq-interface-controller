@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace cornet_dynamics_rabbitMQ_interface
+namespace pssg_rabbitmq_interface
 {
     public class Startup
     {
@@ -14,7 +14,7 @@ namespace cornet_dynamics_rabbitMQ_interface
         }
 
         public IConfiguration Configuration { get; }
-        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+        private readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -31,7 +31,7 @@ namespace cornet_dynamics_rabbitMQ_interface
                 {
                     builder.AllowAnyHeader()
                             .AllowAnyMethod()
-                            .AllowAnyOrigin(); 
+                            .AllowAnyOrigin();
                 });
             });
         }
