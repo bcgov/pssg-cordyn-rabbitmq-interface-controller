@@ -22,6 +22,7 @@ namespace pssg_rabbitmq_interface
             services.AddSwaggerDocument(c =>
             {
                 c.Title = "Rabbit MQ Interface";
+                c.Version = typeof(Startup).Assembly.GetName().Version.ToString();
             });
 
             services.AddCors(options =>
