@@ -29,7 +29,7 @@ namespace pssg_rabbitmq_interface.Clients
         private readonly int truncate = int.Parse(ConfigurationManager.FetchConfig("RabbitMq:Settings:Truncate"));
         private readonly String ackmode = ConfigurationManager.FetchConfig("RabbitMq:Settings:Ackmode");
         private readonly String exchangeTypeStr = ConfigurationManager.FetchConfig("RabbitMq:Settings:ExchangeType");
-        private static ExchangeType exchangeType = ExchangeType.Direct;
+        ExchangeType exchangeType = ExchangeType.Direct;
         private readonly ConnectionFactory factory;
         public RabbitClient()
         {
