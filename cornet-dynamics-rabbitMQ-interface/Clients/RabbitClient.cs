@@ -29,7 +29,7 @@ namespace pssg_rabbitmq_interface.Clients
         private readonly int truncate = int.Parse(ConfigurationManager.FetchConfig("RabbitMq:Settings:Truncate"));
         private readonly String ackmode = ConfigurationManager.FetchConfig("RabbitMq:Settings:Ackmode");
         private readonly String exchangeTypeStr = ConfigurationManager.FetchConfig("RabbitMq:Settings:ExchangeType");
-        public static ExchangeType exchangeType = new ExchangeType();
+        //private readonly ExchangeType exchangeType = new ExchangeType();
         private readonly ConnectionFactory factory;
         public RabbitClient()
         {
@@ -39,7 +39,7 @@ namespace pssg_rabbitmq_interface.Clients
                 Password = password,
                 HostName = rabbitUri
             };
-            switch(exchangeTypeStr){                    
+           /* switch(exchangeTypeStr){                    
                 case "Direct":
                     exchangeType = ExchangeType.Direct;
                 break;
@@ -55,7 +55,7 @@ namespace pssg_rabbitmq_interface.Clients
                 default:
                     exchangeType = ExchangeType.Direct;
                 break;
-            }
+            } */
         }
         /// <summary>
         /// Api call to rabbitmq
@@ -101,7 +101,7 @@ namespace pssg_rabbitmq_interface.Clients
                 using (IConnection conn = factory.CreateConnection())
                 {
                     IModel channel = conn.CreateModel();
-                    channel.ExchangeDeclare(exchange, exchangeType, true);
+                    channel.ExchangeDeclare(exchange, ExchangeType.Fanout, true);
                     foreach (ParkingLotMessage parkingLotMessage in rabbitMessages.messages)
                     {
                         var properties = channel.CreateBasicProperties();
@@ -136,7 +136,7 @@ namespace pssg_rabbitmq_interface.Clients
                 var properties = channel.CreateBasicProperties();
                 properties.Persistent = false;
 
-                channel.ExchangeDeclare(exchange, exchangeType, true);
+                channel.ExchangeDeclare(exchange, ExchangeType.Fanout, true);
                 foreach (ParkingLotMessage parkingLotMessage in rabbitMessage.messages)
                 {
                     JObject jsonObject = JsonConvert.DeserializeObject<JObject>(parkingLotMessage.payload);
@@ -168,7 +168,7 @@ namespace pssg_rabbitmq_interface.Clients
             using (IConnection conn = factory.CreateConnection())
             {
                 IModel channel = conn.CreateModel();
-                channel.ExchangeDeclare(parkingLotExchange, exchangeType, true);
+                channel.ExchangeDeclare(parkingLotExchange, ExchangeType.Fanout, true);
                 for (BasicGetResult result; (result = channel.BasicGet(parkingLotQueue, false)) != null;)
                 {
                     byte[] body = result.Body;
@@ -207,7 +207,7 @@ namespace pssg_rabbitmq_interface.Clients
             using (IConnection conn = factory.CreateConnection())
             {
                 IModel channel = conn.CreateModel();
-                channel.ExchangeDeclare(parkingLotExchange, exchangeType, true);
+                channel.ExchangeDeclare(parkingLotExchange, ExchangeType.Fanout, true);
                 for (BasicGetResult result; (result = channel.BasicGet(parkingLotQueue, false)) != null;)
                 {
 
